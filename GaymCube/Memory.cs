@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using GaymCube.CPU;
-using GaymCube.Util;
 
 namespace GaymCube
 {
@@ -9,110 +10,105 @@ namespace GaymCube
         class UnhandledAddressException : Exception
         {
             public UnhandledAddressException(uint address)
-                : base(String.Format("Memory access to unknown address: 0x{0:X8}", address))
+                : base(string.Format("Memory access to unknown address: 0x{0:X8}", address))
             {
             }
         }
 
-        private byte[] main_ram = new byte[0x180_0000];
+        private const uint MainMemoryStartAddress = 0x8000_0000;
+        private const uint MainMemoryEndAddress = 0x817F_FFFF;
+        private const uint MainMemorySize = MainMemoryEndAddress - MainMemoryStartAddress + 1;
+
+        private byte[] _mainMemory = new byte[MainMemorySize];
 
         public Memory()
         {
-            Array.Fill<byte>(main_ram, 0);
+            _mainMemory.AsSpan().Fill(0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsInsideMainMemory(uint address)
+        {
+            return address >= MainMemoryStartAddress && address <= MainMemoryEndAddress;
         }
 
         // TODO: think of a good way to decode addresses.
         // TODO: should addresses be force-aligned?
         // TODO: can we fake big-endian without BSwap?
 
-        public unsafe byte ReadByte(uint address)
+        public byte ReadByte(uint address)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
-
-                fixed (byte* data = main_ram)
-                {
-                    return *(data + offset);
-                }
+                return GetSpan(address, sizeof(ushort))[0];
             }
 
             throw new UnhandledAddressException(address);
         }
 
-        public unsafe ushort ReadHalf(uint address)
+        public ushort ReadHalf(uint address)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
-
-                fixed (byte* data = main_ram)
-                {
-                    return ByteSwap.Swap16(*(ushort*)(data + offset));
-                }
+                return BinaryPrimitives.ReadUInt16BigEndian(GetSpan(address, sizeof(ushort)));
             }
 
             throw new UnhandledAddressException(address);
         }
 
-        public unsafe uint ReadWord(uint address)
+        public uint ReadWord(uint address)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
-
-                fixed (byte* data = main_ram)
-                {
-                    return ByteSwap.Swap32(*(uint*)(data + offset));
-                }
+                return BinaryPrimitives.ReadUInt32BigEndian(GetSpan(address, sizeof(uint)));
             }
 
             throw new UnhandledAddressException(address);
         }
 
-        public unsafe void WriteByte(uint address, byte value)
+        public void WriteByte(uint address, byte value)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
-
-                fixed (byte* data = main_ram)
-                {
-                    *(data + offset) = value;
-                    return;
-                }
+                GetSpan(address, sizeof(ushort))[0] = value;
             }
-
-            throw new NotImplementedException();
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public unsafe void WriteHalf(uint address, ushort value)
+        public void WriteHalf(uint address, ushort value)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
-
-                fixed (byte* data = main_ram)
-                {
-                    *(ushort*)(data + offset) = ByteSwap.Swap16(value);
-                    return;
-                }
+                BinaryPrimitives.WriteUInt16BigEndian(GetSpan(address, sizeof(ushort)), value);
             }
-
-            throw new NotImplementedException();
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public unsafe void WriteWord(uint address, uint value)
+        public void WriteWord(uint address, uint value)
         {
-            if (address >= 0x8000_0000 && address <= 0x817F_FFFF)
+            if (IsInsideMainMemory(address))
             {
-                var offset = address & 0x017F_FFFF;
+                BinaryPrimitives.WriteUInt32BigEndian(GetSpan(address, sizeof(uint)), value);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-                fixed (byte* data = main_ram)
-                {
-                    *(uint*)(data + offset) = ByteSwap.Swap32(value);
-                    return;
-                }
+        public Span<byte> GetSpan(uint address, int size)
+        {
+            if (IsInsideMainMemory(address))
+            {
+                int offset = (int)(address & 0x017F_FFFF);
+
+                return _mainMemory.AsSpan().Slice(offset, size);
             }
 
             throw new NotImplementedException();

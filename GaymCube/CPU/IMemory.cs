@@ -1,7 +1,11 @@
-﻿namespace GaymCube.CPU
+﻿using System;
+
+namespace GaymCube.CPU
 {
     interface IMemory
     {
+        Span<byte> GetSpan(uint address, int size);
+
         byte ReadByte(uint address);
         ushort ReadHalf(uint address);
         uint ReadWord(uint address);
