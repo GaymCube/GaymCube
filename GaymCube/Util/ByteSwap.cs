@@ -4,14 +4,14 @@ namespace GaymCube.Util
 {
     static class ByteSwap
     {
-        public static UInt32 Swap32(UInt32 value)
+        public static uint Swap32(uint value)
         {
             byte[] data = BitConverter.GetBytes(value);
             Array.Reverse(data);
             return BitConverter.ToUInt32(data);
         }
 
-        public static UInt16 Swap16(UInt16 value)
+        public static ushort Swap16(ushort value)
         {
             byte[] data = BitConverter.GetBytes(value);
             Array.Reverse(data);

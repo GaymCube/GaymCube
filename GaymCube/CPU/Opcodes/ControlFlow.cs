@@ -4,11 +4,11 @@ namespace GaymCube.CPU
 {
     partial class Gekko
     {
-        private void Branch(UInt32 opcode)
+        private void Branch(uint opcode)
         {
             bool link = (opcode & 1) != 0;
             bool absolute = (opcode & 2) != 0;
-            UInt32 address = opcode & 0x3FF_FFFC;
+            uint address = opcode & 0x3FF_FFFC;
 
             // TODO: what is the best way to sign-extend in C#?
             if ((address & 0x200_0000) != 0)
@@ -18,7 +18,7 @@ namespace GaymCube.CPU
 
             if (link)
             {
-                State.LR = State.PC + sizeof(UInt32);
+                State.LR = State.PC + sizeof(uint);
             }
 
             if (absolute)
@@ -33,7 +33,7 @@ namespace GaymCube.CPU
 
         private void ReturnFromInterrupt()
         {
-            const UInt32 MSR_MASK = 0x87C0_FFF3;
+            const uint MSR_MASK = 0x87C0_FFF3;
 
             State.MSR &= ~(MSR_MASK | 0x4_0000);
             State.MSR |= State.SRR1 & MSR_MASK;

@@ -19,32 +19,32 @@ namespace GaymCube
                 // Read code and data sections
                 for (int i = 0; i < 18; i++)
                 {
-                    UInt32 file_address;
-                    UInt32 memory_address;
-                    UInt32 size;
+                    uint file_address;
+                    uint memory_address;
+                    uint size;
 
-                    binary_reader.BaseStream.Position = 0x00 + i * sizeof(UInt32);
+                    binary_reader.BaseStream.Position = 0x00 + i * sizeof(uint);
                     file_address = ByteSwap.Swap32(binary_reader.ReadUInt32());
 
-                    binary_reader.BaseStream.Position = 0x48 + i * sizeof(UInt32);
+                    binary_reader.BaseStream.Position = 0x48 + i * sizeof(uint);
                     memory_address = ByteSwap.Swap32(binary_reader.ReadUInt32());
 
-                    binary_reader.BaseStream.Position = 0x90 + i * sizeof(UInt32);
+                    binary_reader.BaseStream.Position = 0x90 + i * sizeof(uint);
                     size = ByteSwap.Swap32(binary_reader.ReadUInt32());
 
                     Console.WriteLine("section[{0}]:\t src=0x{1:X8} dst=0x{2:X8} size=0x{3:X8}", i, file_address, memory_address, size);
 
                     binary_reader.BaseStream.Position = file_address;
 
-                    for (UInt32 j = 0; j < size; j++)
+                    for (uint j = 0; j < size; j++)
                     {
                         memory.WriteByte(memory_address++, binary_reader.ReadByte());
                     }
                 }
 
-                UInt32 bss_address;
-                UInt32 bss_size;
-                UInt32 entrypoint;
+                uint bss_address;
+                uint bss_size;
+                uint entrypoint;
 
                 binary_reader.BaseStream.Position = 0xD8;
                 bss_address = ByteSwap.Swap32(binary_reader.ReadUInt32());
@@ -55,7 +55,7 @@ namespace GaymCube
                 Console.WriteLine("Entrypoint: 0x{0:X8}", entrypoint);
 
                 // Clear the BSS region
-                for (UInt32 i = 0; i < bss_size; i++)
+                for (uint i = 0; i < bss_size; i++)
                 {
                     memory.WriteByte(bss_address++, 0);
                 }

@@ -4,33 +4,33 @@ namespace GaymCube.CPU
 {
     partial class Gekko
     {
-        private void MoveFromMSR(UInt32 opcode)
+        private void MoveFromMSR(uint opcode)
         {
-            UInt32 dst = (opcode >> 21) & 0x1F;
+            uint dst = (opcode >> 21) & 0x1F;
             State.GPR[dst] = State.MSR;
-            State.PC += sizeof(UInt32);
+            State.PC += sizeof(uint);
         }
 
-        private void MoveFromSPR(UInt32 opcode)
+        private void MoveFromSPR(uint opcode)
         {
-            UInt32 spr_hi = (opcode >> 11) & 0x1F;
-            UInt32 spr_lo = (opcode >> 16) & 0x1F;
-            UInt32 src = (spr_hi << 5) | spr_lo;
-            UInt32 dst = (opcode >> 21) & 0x1F;
+            uint spr_hi = (opcode >> 11) & 0x1F;
+            uint spr_lo = (opcode >> 16) & 0x1F;
+            uint src = (spr_hi << 5) | spr_lo;
+            uint dst = (opcode >> 21) & 0x1F;
 
             State.GPR[dst] = State.SPR[src];
-            State.PC += sizeof(UInt32);
+            State.PC += sizeof(uint);
         }
 
-        private void MoveToSPR(UInt32 opcode)
+        private void MoveToSPR(uint opcode)
         {
-            UInt32 spr_hi = (opcode >> 11) & 0x1F;
-            UInt32 spr_lo = (opcode >> 16) & 0x1F;
-            UInt32 dst = (spr_hi << 5) | spr_lo;
-            UInt32 src = (opcode >> 21) & 0x1F;
+            uint spr_hi = (opcode >> 11) & 0x1F;
+            uint spr_lo = (opcode >> 16) & 0x1F;
+            uint dst = (spr_hi << 5) | spr_lo;
+            uint src = (opcode >> 21) & 0x1F;
 
             State.SPR[dst] = State.GPR[src];
-            State.PC += sizeof(UInt32);
+            State.PC += sizeof(uint);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace GaymCube.Util
 {
     static class BitUtil
     {
-        public static UInt32 RotateLeft(UInt32 value, int amount)
+        public static uint RotateLeft(uint value, int amount)
         {
             if (amount != 0)
             {

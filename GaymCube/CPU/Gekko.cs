@@ -6,8 +6,8 @@ namespace GaymCube.CPU
     {
         class UnhandledOpcodeException : Exception
         {
-            public UnhandledOpcodeException(UInt32 opcode)
-                : base(String.Format("Unhandled opcode 0x{0:X8}", opcode))
+            public UnhandledOpcodeException(uint opcode)
+                : base(string.Format("Unhandled opcode 0x{0:X8}", opcode))
             {
             }
         }
@@ -17,7 +17,7 @@ namespace GaymCube.CPU
 
         public Gekko(IMemory memory)
         {
-            this.Memory = memory;
+            Memory = memory;
         }
 
         public void Reset()
@@ -29,9 +29,9 @@ namespace GaymCube.CPU
         {
             while (instructions-- > 0)
             {
-                UInt32 opcode = Memory.ReadWord(State.PC);
-                UInt32 primary_op = opcode >> 26;
-                UInt32 secondary_op = opcode & 0x7FF;
+                uint opcode = Memory.ReadWord(State.PC);
+                uint primary_op = opcode >> 26;
+                uint secondary_op = opcode & 0x7FF;
 
                 Console.WriteLine("PC=0x{0:X8} opcode=0x{1:X8}", State.PC, opcode);
 
@@ -84,24 +84,24 @@ namespace GaymCube.CPU
             }
         }
 
-        private void UpdateCR0(UInt32 value)
+        private void UpdateCR0(uint value)
         {
             // TODO: copy overflow bit from XER register into SO.
             State.CR0 = 0x0000_0000;
 
-            if ((Int32)value < 0)
+            if ((int)value < 0)
             {
-                State.CR0 |= (UInt32)GekkoState.Condition.LT;
+                State.CR0 |= (uint)GekkoState.Condition.LT;
             }
 
-            if ((Int32)value > 0)
+            if ((int)value > 0)
             {
-                State.CR0 |= (UInt32)GekkoState.Condition.GT;
+                State.CR0 |= (uint)GekkoState.Condition.GT;
             }
 
             if (value == 0)
             {
-                State.CR0 |= (UInt32)GekkoState.Condition.EQ;
+                State.CR0 |= (uint)GekkoState.Condition.EQ;
             }
         }
     }
