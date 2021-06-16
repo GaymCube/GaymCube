@@ -6,15 +6,9 @@ namespace GaymCube.CPU
     {
         private void ADDIS(uint opcode)
         {
-            uint imm = opcode & 0xFFFF;
+            uint imm = (opcode & 0xFFFF) << 16;
             uint src = (opcode >> 16) & 0x1F;
             uint dst = (opcode >> 21) & 0x1F;
-
-            // TODO: what is the best way to sign-extend in C#?
-            if ((imm & 0x8000) != 0)
-            {
-                imm |= 0xFFFF0000;
-            }
 
             if (src == 0)
             {
@@ -41,11 +35,11 @@ namespace GaymCube.CPU
         // TODO: this is very similar to the unshifted variant.
         private void ORIS(uint opcode)
         {
-            uint imm = opcode & 0xFFFF;
+            uint imm = (opcode & 0xFFFF) << 16;
             uint dst = (opcode >> 16) & 0x1F;
             uint src = (opcode >> 21) & 0x1F;
 
-            State.GPR[dst] = State.GPR[src] | (imm << 16);
+            State.GPR[dst] = State.GPR[src] | imm;
             State.PC += sizeof(uint);
         }
 
