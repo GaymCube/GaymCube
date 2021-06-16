@@ -47,30 +47,32 @@ namespace GaymCube.CPU
         private void RLWINM(uint opcode)
         {
             bool Rc = (opcode & 1) != 0;
-            uint mask_extend = (opcode >> 1) & 0x1F;
-            uint mask_base = (opcode >> 6) & 0x1F;
-            uint shift = (opcode >> 11) & 0x1F;
+            int mask_end = (int)((opcode >> 1) & 0x1F);
+            int mask_base = (int)((opcode >> 6) & 0x1F);
+            int shift = (int)((opcode >> 11) & 0x1F);
             uint dst = (opcode >> 16) & 0x1F;
             uint src = (opcode >> 21) & 0x1F;
 
-            uint mask;
+            uint value = BitUtil.RotateLeft(State.GPR[src], shift);
 
-            if (mask_extend == 31)
+            if (mask_base <= mask_end)
             {
-                mask = 0xFFFFFFFF;
+                int length = mask_end - mask_base + 1;
+                value &= ~(0xFFFFFFFF << length) << (31 - mask_end);
             }
             else
             {
-                mask = ~(0xFFFFFFFF >> (int)(mask_extend + 1));
+                int length = mask_base - mask_end + 1;
+                value &= ~(~(0xFFFFFFFF << length) << (31 - mask_base));
             }
-
-            State.GPR[dst] = BitUtil.RotateLeft(State.GPR[src], (int)shift) & (mask >> (int)mask_base);
 
             if (Rc)
             {
-                UpdateCR0(State.GPR[dst]);
+                UpdateCR0(value);
             }
 
+
+            State.GPR[dst] = value;
             State.PC += sizeof(uint);
         }
     }
