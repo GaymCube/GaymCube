@@ -55,5 +55,11 @@ namespace GaymCube.CPU
             // STUBBED
             State.PC += sizeof(uint);
         }
+
+        private void Sync()
+        {
+            // STUBBED
+            State.PC += sizeof(uint);
+        }
     }
 }

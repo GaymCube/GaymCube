@@ -89,6 +89,9 @@ namespace GaymCube.CPU
                             case 934:
                                 MoveToSPR(opcode);
                                 break;
+                            case 1196:
+                                Sync();
+                                break;
                             default:
                                 throw new UnhandledOpcodeException(opcode);
                         }
