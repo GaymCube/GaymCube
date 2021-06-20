@@ -11,6 +11,14 @@ namespace GaymCube.CPU
             State.PC += sizeof(uint);
         }
 
+        private void MoveToMSR(uint opcode)
+        {
+            uint src = (opcode >> 21) & 0x1F;
+            State.MSR = State.GPR[src];
+            State.PC += sizeof(uint);
+        }
+
+
         private void MoveToSR(uint opcode)
         {
             uint dst = (opcode >> 16) & 0xF;

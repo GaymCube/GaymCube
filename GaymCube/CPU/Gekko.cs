@@ -77,6 +77,9 @@ namespace GaymCube.CPU
                             case 166:
                                 MoveFromMSR(opcode);
                                 break;
+                            case 292:
+                                MoveToMSR(opcode);
+                                break;
                             case 420:
                                 MoveToSR(opcode);
                                 break;
