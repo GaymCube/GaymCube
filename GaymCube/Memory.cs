@@ -15,9 +15,15 @@ namespace GaymCube
             }
         }
 
-        private const uint MainMemoryStartAddress = 0x8000_0000;
-        private const uint MainMemoryEndAddress = 0x817F_FFFF;
-        private const uint MainMemorySize = MainMemoryEndAddress - MainMemoryStartAddress + 1;
+        private const uint MainMemorySize = 0x0180_0000;
+
+        private const uint MainMemoryMirror0StartAddress = 0x0000_0000;
+        private const uint MainMemoryMirror1StartAddress = 0x8000_0000;
+        private const uint MainMemoryMirror2StartAddress = 0xC000_0000;
+
+        private const uint MainMemoryMirror0EndAddress = MainMemoryMirror0StartAddress + MainMemorySize - 1;
+        private const uint MainMemoryMirror1EndAddress = MainMemoryMirror1StartAddress + MainMemorySize - 1;
+        private const uint MainMemoryMirror2EndAddress = MainMemoryMirror2StartAddress + MainMemorySize - 1;
 
         private byte[] _mainMemory = new byte[MainMemorySize];
 
@@ -29,7 +35,9 @@ namespace GaymCube
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsInsideMainMemory(uint address)
         {
-            return address >= MainMemoryStartAddress && address <= MainMemoryEndAddress;
+            return (address >= MainMemoryMirror0StartAddress && address <= MainMemoryMirror0EndAddress) ||
+               (address >= MainMemoryMirror1StartAddress && address <= MainMemoryMirror1EndAddress) ||
+               (address >= MainMemoryMirror2StartAddress && address <= MainMemoryMirror2EndAddress);
         }
 
         // TODO: think of a good way to decode addresses.
@@ -38,75 +46,39 @@ namespace GaymCube
 
         public byte ReadByte(uint address)
         {
-            if (IsInsideMainMemory(address))
-            {
-                return GetSpan(address, sizeof(ushort))[0];
-            }
-
-            throw new UnhandledAddressException(address);
+            return GetSpan(address, sizeof(ushort))[0];
         }
 
         public ushort ReadHalf(uint address)
         {
-            if (IsInsideMainMemory(address))
-            {
-                return BinaryPrimitives.ReadUInt16BigEndian(GetSpan(address, sizeof(ushort)));
-            }
-
-            throw new UnhandledAddressException(address);
+            return BinaryPrimitives.ReadUInt16BigEndian(GetSpan(address, sizeof(ushort)));
         }
 
         public uint ReadWord(uint address)
         {
-            if (IsInsideMainMemory(address))
-            {
-                return BinaryPrimitives.ReadUInt32BigEndian(GetSpan(address, sizeof(uint)));
-            }
-
-            throw new UnhandledAddressException(address);
+            return BinaryPrimitives.ReadUInt32BigEndian(GetSpan(address, sizeof(uint)));
         }
 
         public void WriteByte(uint address, byte value)
         {
-            if (IsInsideMainMemory(address))
-            {
-                GetSpan(address, sizeof(ushort))[0] = value;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            GetSpan(address, sizeof(ushort))[0] = value;
         }
 
         public void WriteHalf(uint address, ushort value)
         {
-            if (IsInsideMainMemory(address))
-            {
-                BinaryPrimitives.WriteUInt16BigEndian(GetSpan(address, sizeof(ushort)), value);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            BinaryPrimitives.WriteUInt16BigEndian(GetSpan(address, sizeof(ushort)), value);
         }
 
         public void WriteWord(uint address, uint value)
         {
-            if (IsInsideMainMemory(address))
-            {
-                BinaryPrimitives.WriteUInt32BigEndian(GetSpan(address, sizeof(uint)), value);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            BinaryPrimitives.WriteUInt32BigEndian(GetSpan(address, sizeof(uint)), value);
         }
 
         public Span<byte> GetSpan(uint address, int size)
         {
             if (IsInsideMainMemory(address))
             {
-                int offset = (int)(address & 0x017F_FFFF);
+                int offset = (int)(address & (MainMemorySize - 1));
 
                 return _mainMemory.AsSpan().Slice(offset, size);
             }
