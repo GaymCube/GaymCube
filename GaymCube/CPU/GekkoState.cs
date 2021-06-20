@@ -64,7 +64,7 @@ namespace GaymCube.CPU
         // Bit 3: summary overflow (copy of overflow flag in XER)
         public uint CR0 { get; set; }
 
-        // Machine Status Register (MSR)
+        // Machine State Register (MSR)
         public uint MSR { get; set; }
 
         // Segment Registers (SR0 - SR15)

@@ -93,6 +93,9 @@ namespace GaymCube.CPU
                     case 36:
                         StoreWord(opcode);
                         break;
+                    case 37:
+                        StoreWordUpdate(opcode);
+                        break;
                     default:
                         throw new UnhandledOpcodeException(opcode);
                 }
