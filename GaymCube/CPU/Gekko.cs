@@ -37,6 +37,9 @@ namespace GaymCube.CPU
 
                 switch (primary_op)
                 {
+                    case 14:
+                        ADDI(opcode);
+                        break;
                     case 15:
                         ADDIS(opcode);
                         break;

@@ -4,6 +4,30 @@ namespace GaymCube.CPU
 {
     partial class Gekko
     {
+        private void ADDI(uint opcode)
+        {
+            uint imm = (opcode & 0xFFFF) << 16;
+            uint src = (opcode >> 16) & 0x1F;
+            uint dst = (opcode >> 21) & 0x1F;
+
+            if ((imm & 0x8000) != 0)
+            {
+                imm |= 0xFFFF_0000;
+            }
+
+            if (src == 0)
+            {
+                State.GPR[dst] = imm;
+            }
+            else
+            {
+                State.GPR[dst] = State.GPR[src] + imm;
+            }
+
+            State.PC += sizeof(uint);
+        }
+
+        // TODO: this is very similar to the unshifted variant.
         private void ADDIS(uint opcode)
         {
             uint imm = (opcode & 0xFFFF) << 16;
