@@ -64,7 +64,11 @@ namespace GaymCube
                 gekko.State.PC = entrypoint;
             }
 
-            gekko.Run(32);
+            // FIXME: proper emulation loop
+            while (true)
+            {
+                gekko.Run(1);
+            }
         }
     }
 }

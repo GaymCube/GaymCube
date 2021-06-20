@@ -56,10 +56,15 @@ namespace GaymCube.CPU
         // Machine Status Register (MSR)
         public uint MSR { get; set; }
 
+        // Segment Registers (SR0 - SR15)
+        // I think these are related to BATS?
+        public uint[] SR { get; private set; } = new uint[16];
+
         public void Reset()
         {
             Array.Fill<uint>(GPR, 0x0000_0000);
             Array.Fill<uint>(SPR, 0x0000_0000);
+            Array.Fill<uint>(SR, 0x0000_0000);
             PC = 0x0000_0000;
             CR0 = 0x0000_0000;
             // TODO: initialize MSR to a sane value.
