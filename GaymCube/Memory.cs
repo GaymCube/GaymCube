@@ -21,7 +21,7 @@ namespace GaymCube
         private const uint MainMemoryMirror1StartAddress = 0x8000_0000;
         private const uint MainMemoryMirror2StartAddress = 0xC000_0000;
 
-        private const uint MainMemoryMirror0EndAddress = MainMemoryMirror0StartAddress + MainMemorySize - 1;
+        private const uint MainMemoryMirror0EndAddress = MainMemoryMirror0StartAddress + 0x7FFF_FFFF;
         private const uint MainMemoryMirror1EndAddress = MainMemoryMirror1StartAddress + MainMemorySize - 1;
         private const uint MainMemoryMirror2EndAddress = MainMemoryMirror2StartAddress + MainMemorySize - 1;
 
