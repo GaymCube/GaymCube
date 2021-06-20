@@ -1,4 +1,4 @@
-﻿using GaymCube.Util;
+﻿using System.Numerics;
 
 namespace GaymCube.CPU
 {
@@ -53,7 +53,7 @@ namespace GaymCube.CPU
             uint dst = (opcode >> 16) & 0x1F;
             uint src = (opcode >> 21) & 0x1F;
 
-            uint value = BitUtil.RotateLeft(State.GPR[src], shift);
+            uint value = BitOperations.RotateLeft(State.GPR[src], shift);
 
             if (mask_base <= mask_end)
             {
