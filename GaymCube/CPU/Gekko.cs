@@ -49,6 +49,9 @@ namespace GaymCube.CPU
                             case 100:
                                 ReturnFromInterrupt();
                                 break;
+                            case 300:
+                                InstructionSync();
+                                break;
                             default:
                                 throw new UnhandledOpcodeException(opcode);
                         }

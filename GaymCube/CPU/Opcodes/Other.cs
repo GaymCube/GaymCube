@@ -32,5 +32,11 @@ namespace GaymCube.CPU
             State.SPR[dst] = State.GPR[src];
             State.PC += sizeof(uint);
         }
+
+        private void InstructionSync()
+        {
+            // STUBBED
+            State.PC += sizeof(uint);
+        }
     }
 }
