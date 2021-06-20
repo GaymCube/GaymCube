@@ -31,6 +31,55 @@ namespace GaymCube.CPU
             }
         }
 
+        private void BranchConditionalToLR(uint opcode)
+        {
+            bool link = (opcode & 1) != 0;
+            int conditionIndex = (int)((opcode >> 16) & 0x1F);
+            bool forceCounterOK = (opcode & (1 << 23)) != 0;
+            bool forceConditionOK = (opcode & (1 << 25)) != 0;
+
+            bool counterOK = true;
+            bool conditionOK = true;
+
+            if (!forceCounterOK)
+            {
+                bool invertCounterOK = (opcode & (1 << 22)) != 0;
+
+                counterOK = --State.CTR != 0;
+
+                if (invertCounterOK)
+                {
+                    counterOK = !counterOK;
+                }
+            }
+
+            if (!forceConditionOK)
+            {
+                bool invertConditionOK = (opcode & (1 << 24)) == 0;
+
+                conditionOK = (State.CR0 & (0x8000_0000 >> conditionIndex)) != 0;
+
+                if (invertConditionOK)
+                {
+                    conditionOK = !conditionOK;
+                }
+            }
+
+            if (counterOK && conditionOK)
+            {
+                uint lr = State.LR & 0xFFFF_FFFC;
+                if (link)
+                {
+                    State.LR = State.PC + sizeof(uint);
+                }
+                State.PC = lr;
+            }
+            else
+            {
+                State.PC += sizeof(uint);
+            }
+        }
+
         private void ReturnFromInterrupt()
         {
             const uint MSR_MASK = 0x87C0_FFF3;

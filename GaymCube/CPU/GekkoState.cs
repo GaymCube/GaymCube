@@ -28,6 +28,17 @@ namespace GaymCube.CPU
                 SPR[8] = value;
             }
         }
+        public uint CTR
+        {
+            get
+            {
+                return SPR[9];
+            }
+            set
+            {
+                SPR[9] = value;
+            }
+        }
         public uint SRR0
         {
             get

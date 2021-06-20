@@ -49,6 +49,9 @@ namespace GaymCube.CPU
                     case 19:
                         switch (secondary_op)
                         {
+                            case 32:
+                                BranchConditionalToLR(opcode);
+                                break;
                             case 100:
                                 ReturnFromInterrupt();
                                 break;
