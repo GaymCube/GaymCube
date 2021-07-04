@@ -43,6 +43,9 @@ namespace GaymCube.CPU
                     case 15:
                         ADDIS(opcode);
                         break;
+                    case 16:
+                        BranchConditional(opcode);
+                        break;
                     case 18:
                         Branch(opcode);
                         break;
@@ -130,6 +133,42 @@ namespace GaymCube.CPU
             {
                 State.CR0 |= (uint)GekkoState.Condition.EQ;
             }
+        }
+
+        private bool EvaluateBranchCondition(uint opcode)
+        {
+            int conditionIndex = (int)((opcode >> 16) & 0x1F);
+            bool forceCounterOK = (opcode & (1 << 23)) != 0;
+            bool forceConditionOK = (opcode & (1 << 25)) != 0;
+
+            bool counterOK = true;
+            bool conditionOK = true;
+
+            if (!forceCounterOK)
+            {
+                bool invertCounterOK = (opcode & (1 << 22)) != 0;
+
+                counterOK = --State.CTR != 0;
+
+                if (invertCounterOK)
+                {
+                    counterOK = !counterOK;
+                }
+            }
+
+            if (!forceConditionOK)
+            {
+                bool invertConditionOK = (opcode & (1 << 24)) == 0;
+
+                conditionOK = (State.CR0 & (0x8000_0000 >> conditionIndex)) != 0;
+
+                if (invertConditionOK)
+                {
+                    conditionOK = !conditionOK;
+                }
+            }
+
+            return counterOK && conditionOK;
         }
     }
 }
