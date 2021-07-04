@@ -4,6 +4,21 @@ namespace GaymCube.CPU
 {
     partial class Gekko
     {
+        private void PairedSingleMoveRegister(uint opcode)
+        {
+            bool Rc = (opcode & 1) != 0;
+            uint src = (opcode >> 11) & 0x1F;
+            uint dst = (opcode >> 21) & 0x1F;
+
+            if (Rc)
+            {
+                throw new UnhandledOpcodeException(opcode);
+            }
+
+            State.FPR[dst] = State.FPR[src];
+            State.PC += sizeof(uint);
+        }
+
         private void PairedSingleQuantizedLoad(uint opcode)
         {
             uint regBase = (opcode >> 16) & 0x1F;

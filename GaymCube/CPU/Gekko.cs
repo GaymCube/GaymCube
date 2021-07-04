@@ -37,6 +37,16 @@ namespace GaymCube.CPU
 
                 switch (primary_op)
                 {
+                    case 4:
+                        // TODO: the decoding seems to be more complicated in reality.
+                        switch (secondary_op)
+                        {
+                            case 144:
+                            case 145:
+                                PairedSingleMoveRegister(opcode);
+                                break;
+                        }
+                        break;
                     case 14:
                         ADDI(opcode);
                         break;
