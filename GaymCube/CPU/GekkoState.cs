@@ -15,6 +15,9 @@ namespace GaymCube.CPU
         // General Purpose Registers R0 - R31
         public uint[] GPR { get; } = new uint[32];
 
+        // Floating Point Registers FR0 - FR31
+        public ulong[] FPR { get; } = new ulong[32];
+
         // Special Purpose Registers SPR0 - SPR1023
         public uint[] SPR { get; } = new uint[1024];
         public uint LR

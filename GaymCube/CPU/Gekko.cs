@@ -108,6 +108,9 @@ namespace GaymCube.CPU
                     case 37:
                         StoreWordUpdate(opcode);
                         break;
+                    case 56:
+                        PairedSingleQuantizedLoad(opcode);
+                        break;
                     default:
                         throw new UnhandledOpcodeException(opcode);
                 }
