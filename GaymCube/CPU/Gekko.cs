@@ -118,6 +118,9 @@ namespace GaymCube.CPU
                     case 37:
                         StoreWordUpdate(opcode);
                         break;
+                    case 50:
+                        LoadDoublePrecisionFloat(opcode);
+                        break;
                     case 56:
                         PairedSingleQuantizedLoad(opcode);
                         break;
