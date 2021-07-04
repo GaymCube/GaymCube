@@ -173,5 +173,39 @@ namespace GaymCube.CPU
 
             return counterOK && conditionOK;
         }
+
+        private uint LoadQuantized(ref uint address, int loadScale, int loadType)
+        {
+            float result = (float)(1 << loadScale);
+
+            // See 2.1.2.11 Graphics Quantization Registers (GQRs) in PowerPC 750CL manual.
+            switch (loadType)
+            {
+                case 0:
+                    result *= BitConverter.Int32BitsToSingle((int)Memory.ReadWord(address));
+                    address += sizeof(float);
+                    break;
+                case 4:
+                    result *= Memory.ReadByte(address);
+                    address += sizeof(byte);
+                    break;
+                case 5:
+                    result *= Memory.ReadHalf(address);
+                    address += sizeof(ushort);
+                    break;
+                case 6:
+                    result *= (sbyte)Memory.ReadByte(address);
+                    address += sizeof(sbyte);
+                    break;
+                case 7:
+                    result *= (short)Memory.ReadHalf(address);
+                    address += sizeof(short);
+                    break;
+                default:
+                    throw new Exception(string.Format("Reserved load type: {}", loadType));
+            }
+
+            return (uint)BitConverter.SingleToInt32Bits(result);
+        }
     }
 }
